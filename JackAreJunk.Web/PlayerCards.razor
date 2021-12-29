@@ -1,0 +1,64 @@
+﻿<style>
+    .AllCards {
+    }
+    .TopRow {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .BottomRow {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    .Card {
+        flex: 1;
+        height: 150px;
+        width: 100px;
+    }
+</style>
+
+<div class="AllCards">
+    <div class="TopRow">
+        @for (int i = 0; i < 5; i++)
+        {
+            @if (i < Player.CardsPerDeal)
+            {
+                <div class="Card"><DisplayCard @bind-Game="Game" @bind-Player="Player" @bind-Card="Player.Cards[i]" @bind-CardPos="i"/></div>
+            } else
+            {
+                <div class="Card"/>
+            }
+        }
+    </div>
+    <div class="BottomRow">
+        @for (int i = 5; i < 10; i++)
+        {
+            @if (i < Player.CardsPerDeal)
+            {
+                <div class="Card"><DisplayCard @bind-Game="Game" @bind-Player="Player" @bind-Card="Player.Cards[i]" @bind-CardPos="i" /></div>
+            }
+            else
+            {
+                <div class="Card" />
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public JackAreJunk.Player Player { get; set; }
+
+    [Parameter]
+    public JackAreJunk.Game Game { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.Player> PlayerChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.Game> GameChanged { get; set; }
+
+}

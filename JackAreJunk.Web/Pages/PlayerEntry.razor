@@ -1,0 +1,44 @@
+﻿@page "/PlayerEntry"
+@inject PlayerEntryState state
+@inject NavigationManager NavigationManager
+<style>
+    .NameRow {
+        display: flex;
+    }
+    .InputField {
+        margin: 2px;
+    }
+</style>
+<div>
+    <div class="NameRow">
+        Name:
+        <input class="InputField" type="text" @bind-value="currentName" />
+        <button class="InputField" @onclick="OnAdd">Add</button>
+        <button class="InputField" @onclick="OnDone">Done</button>
+    </div>
+    <div class="ListRow">
+        <ul>
+        @foreach (var name in playerNames)
+        {
+            <li>@name</li>
+        }
+        </ul>
+    </div>
+</div>
+
+@code {
+
+    List<string> playerNames = new List<string>();
+
+    string currentName;
+    public void OnAdd()
+    {
+        playerNames.Add(currentName);
+        currentName = string.Empty;
+    }
+    public void OnDone()
+    {
+        state.TaskSource.SetResult(playerNames);
+        NavigationManager.NavigateTo("Game");
+    }
+}

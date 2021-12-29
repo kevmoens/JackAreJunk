@@ -1,0 +1,85 @@
+﻿<button style="width: 100%; height: 100%;" disabled=@(IsCardEnabled()) @onclick="OnCardClicked">
+    @if (Card is JackAreJunk.ICardPlayable && ((JackAreJunk.ICardPlayable)Card).IsShown)
+    {
+        @Card.ToString()
+    }
+    else
+    {
+        <div>Hidden</div>
+    }
+</button>
+@code {
+    [Parameter]
+    public JackAreJunk.ICard Card { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.ICard> CardChanged { get; set; }
+
+    [Parameter]
+    public JackAreJunk.Game Game { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.Game> GameChanged { get; set; }
+
+    [Parameter]
+    public JackAreJunk.Player Player { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.Player> PlayerChanged { get; set; }
+
+    [Parameter]
+    public int CardPos { get; set; }
+
+    [Parameter]
+    public EventCallback<int> CardPosChanged { get; set; }
+
+    public void OnCardClicked()
+    {
+        if (Game == null || Game.CurrentTurn == null) return;
+        Game.CurrentTurn.WaitForCard.SetResult(Card);
+    }
+
+    public bool IsCardEnabled()
+    {
+        //todo check card pos if wild card to enable, etc...
+        if (Game.CurrentTurn?.CurrentCard == null)
+        {
+            return true;
+        }
+        if (Game.Players[Game.CurrentPlayerTurn] != Player)
+        {
+            return true;
+        }
+        if (Card is ICardPlayable)
+        {
+            if (!((ICardPlayable)Card).IsShown)
+            {
+                return false;
+            }
+        }
+        switch(Card.Rank)
+        {
+            case Rank.C01:
+                return CardPos == 0;
+            case Rank.C02:
+                return CardPos == 1;
+            case Rank.C03:
+                return CardPos == 2;
+            case Rank.C04:
+                return CardPos == 3;
+            case Rank.C05:
+                return CardPos == 4;
+            case Rank.C06:
+                return CardPos == 5;
+            case Rank.C07:
+                return CardPos == 6;
+            case Rank.C08:
+                return CardPos == 7;
+            case Rank.C09:
+                return CardPos == 8;
+            case Rank.C10:
+                return CardPos == 9;
+        }
+        return false;
+    }
+}
