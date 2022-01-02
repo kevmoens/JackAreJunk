@@ -12,6 +12,7 @@ namespace JackAreJunk
         Task<ICard> AskToStartTurn();
         Task<TurnResult> PlayTurn(ICard card);
         void DisplayPlayerCards();
+        Task DisplayNewMatchingCard(Player player, int cardIdx);
         Task InitializeDisplayForTurn(ICard card);
 
     }

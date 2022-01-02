@@ -32,15 +32,23 @@
 
     [Parameter]
     public EventCallback<int> CardPosChanged { get; set; }
-
+    private bool IsJustMatched;
+    public DisplayCard()
+    {
+        PubSub.Hub.Default.Subscribe<GameTurnCardMatchPubSubMessage>(new Func<GameTurnCardMatchPubSubMessage, Task>(e =>
+        {
+            return OnCardMatch(e);
+        }));
+    }
     public void OnCardClicked()
     {
-        if (Game == null || Game.CurrentTurn == null) return;
+        if (Game == null || Game.CurrentTurn == null || IsJustMatched) return;
         Game.CurrentTurn.WaitForCard.SetResult(Card);
     }
 
     public bool IsCardEnabled()
     {
+        if (IsJustMatched) return false;
         //todo check card pos if wild card to enable, etc...
         if (Game.CurrentTurn?.CurrentCard == null)
         {
@@ -81,5 +89,18 @@
                 return CardPos == 9;
         }
         return false;
+    }
+    public async Task OnCardMatch(GameTurnCardMatchPubSubMessage msg)
+    {
+        StateHasChanged();
+        if (msg.Card == Card)
+        {
+            Console.WriteLine($"OnCardMatch {msg.Card}");
+            IsJustMatched = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            IsJustMatched = false;
+            StateHasChanged();
+        }
     }
 }

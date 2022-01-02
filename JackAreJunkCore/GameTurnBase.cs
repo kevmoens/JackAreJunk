@@ -14,13 +14,17 @@ namespace JackAreJunk
         public abstract Task<ICard> AskToStartTurn();
         public abstract Task<int> GetNonSovlvedPosition(ICard card);
         public abstract void DisplayPlayerCards();
+        public abstract Task DisplayNewMatchingCard(Player player, int cardIdx);
         public abstract Task InitializeDisplayForTurn(ICard card);
 
         public TaskCompletionSource<ICard> WaitForCard { get; set; }
 
         public async Task<TurnResult> PlayTurn(ICard card)
         {
+            Guid turnId = Guid.NewGuid();
+            Console.WriteLine($"PlayTurn turnId {turnId} card {card} 1 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
             await InitializeDisplayForTurn(card);
+            Console.WriteLine($"PlayTurn turnId {turnId} card {card} 2 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
             var result = new TurnResult();
             result.Player = ((IGameTurn)this).Player;
             if (CheckForWinner())
@@ -34,11 +38,15 @@ namespace JackAreJunk
                 return result;
             }
             CurrentCard = card;
+            Console.WriteLine($"PlayTurn turnId {turnId} card {card} 3 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
             int index = GetPlayerTurnIndex(card);
+            Console.WriteLine($"PlayTurn turnId {turnId} card {card} 4 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
             if (index == -1) //Wild Card
             {
+                Console.WriteLine($"PlayTurn turnId {turnId} card {card} 5 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
                 //Ask for non-solved position 1-10
                 index = await GetNonSovlvedPosition(card);
+                Console.WriteLine($"PlayTurn turnId {turnId} card {card} 6 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
             }
             CurrentCard = null;
             if (index >= ((IGameTurn)this).Player.Cards.Count)  //DON'T HAVE THIS CARD TO (SOLVE/TURN OVER)
@@ -55,19 +63,26 @@ namespace JackAreJunk
                 }
                 ((ICardPlayable)card).IsShown = true;
                 ((IGameTurn)this).Player.Cards[index] = card;
+
+                Console.WriteLine($"PlayTurn turnId {turnId} card {card} 7 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
+                await DisplayNewMatchingCard(((IGameTurn)this).Player, index);
+                Console.WriteLine($"PlayTurn turnId {turnId} card {card} 8 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
                 if (CheckForWinner())
                 {
                     result.IsWinner = true;
                     return result;
                 }
+                Console.WriteLine($"PlayTurn turnId {turnId} card {card} 9 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
                 //This is the next card to check...
                 return await PlayTurn((ICard)posCard);
             }
             //Play turn with King or Queen
             if (posCard.Rank == Rank.Queen || posCard.Rank == Rank.King)
             {
+                Console.WriteLine($"PlayTurn turnId {turnId} card {card} 10 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
                 return await PlayTurn((ICard)posCard);
             }
+            Console.WriteLine($"PlayTurn turnId {turnId} card {card} 11 {DateTime.Now.ToString("hh:mm:ss.ffff")}");
             //Card already solved.  Turn Over
             result.ReturnCard = card;
             return result;

@@ -9,7 +9,6 @@ namespace JackAreJunk.Web
         public GameTurnWeb()
         {
         }
-        int triedPos = -1;
         public override async Task<ICard> AskToStartTurn()
         {
             await InitializeDisplayForTurn(null);
@@ -30,6 +29,12 @@ namespace JackAreJunk.Web
         {
         }
 
+        public override async Task DisplayNewMatchingCard(Player player, int cardIdx)
+        {            
+            await PubSub.Hub.Default.PublishAsync<GameTurnCardMatchPubSubMessage>(new GameTurnCardMatchPubSubMessage(
+                player.Cards[cardIdx]
+            ));
+        }
         public override async Task<int> GetNonSovlvedPosition(ICard wildCard)
         {
             WaitForCard = new TaskCompletionSource<ICard>();
@@ -45,10 +50,18 @@ namespace JackAreJunk.Web
             return -1;
         }
 
-        public override Task InitializeDisplayForTurn(ICard card)
+        public override async Task InitializeDisplayForTurn(ICard card)
         {
-            PubSub.Hub.Default.Publish<GameTurnCardPubSubMessage>(new GameTurnCardPubSubMessage() { Card = card });
-            return Task.CompletedTask;
+            await PubSub.Hub.Default.PublishAsync<GameTurnCardPubSubMessage>(new GameTurnCardPubSubMessage() { Card = card });
         }
+    }
+
+    public class GameTurnCardMatchPubSubMessage
+    {
+        public GameTurnCardMatchPubSubMessage(ICard card)
+        {
+            Card = card;
+        }
+        public ICard Card { get; set; }
     }
 }

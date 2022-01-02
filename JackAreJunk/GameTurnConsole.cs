@@ -87,5 +87,11 @@ namespace JackAreJunk
                 }
             }
         }
+
+        public override Task DisplayNewMatchingCard(Player player, int cardIdx)
+        {
+            Console.WriteLine($"{player.Cards[cardIdx]} Matched");
+            return Task.CompletedTask;
+        }
     }
 }
