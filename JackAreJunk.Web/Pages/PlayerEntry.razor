@@ -12,7 +12,7 @@
 <div>
     <div class="NameRow">
         Name:
-        <input class="InputField" type="text" @bind-value="currentName" />
+        <input class="InputField" @ref="textInput" type="text" @bind-value="currentName" @onkeyup="@Enter"/>
         <button class="InputField" @onclick="OnAdd">Add</button>
         <button class="InputField" @onclick="OnDone">Done</button>
     </div>
@@ -28,13 +28,22 @@
 
 @code {
 
+    ElementReference textInput;
     List<string> playerNames = new List<string>();
-
+    public async void Enter(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            await OnAdd();
+        }
+    }
     string currentName;
-    public void OnAdd()
+    public async Task OnAdd()
     {
         playerNames.Add(currentName);
         currentName = string.Empty;
+        StateHasChanged();
+        await textInput.FocusAsync();
     }
     public void OnDone()
     {
