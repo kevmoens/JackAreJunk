@@ -50,4 +50,10 @@
         state.TaskSource.SetResult(playerNames);
         NavigationManager.NavigateTo("Game");
     }
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        await textInput.FocusAsync();
+    }
 }
