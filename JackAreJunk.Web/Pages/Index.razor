@@ -130,20 +130,21 @@
     {
         NavigationManager.NavigateTo("PlayerEntry");
     }
-    public void OnGameTurnCard(GameTurnCardPubSubMessage turnCard)
+    public Task OnGameTurnCard(GameTurnCardPubSubMessage turnCard)
     {
         if (turnCard == null)
         {
             PileDiscardDisabled = true;
             CurrentCard = null;
             StateHasChanged();
-            return;
+            return Task.CompletedTask;
         }
 
         CurrentCard = turnCard.Card;
         PileDiscardDisabled = CurrentCard != null;
 
         StateHasChanged();
+        return Task.CompletedTask;
     }
     public async void OnGameDisplayWinner(GameDisplayWinnerPubSubMessage winner)
     {
