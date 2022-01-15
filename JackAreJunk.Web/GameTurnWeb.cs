@@ -38,6 +38,7 @@ namespace JackAreJunk.Web
         public override async Task<int> GetNonSovlvedPosition(ICard wildCard)
         {
             WaitForCard = new TaskCompletionSource<ICard>();
+            PubSub.Hub.Default.Publish<GameTurnRefreshUIMessage>(new GameTurnRefreshUIMessage());
             var card = await WaitForCard.Task;
             if (card == null) return -1;
             for (int i = 0; i < ((IGameTurn)this).Player.Cards.Count; i++)

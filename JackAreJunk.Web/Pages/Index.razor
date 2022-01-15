@@ -88,6 +88,7 @@
         hub.Subscribe<PlayerEntryPubSubMessage>(OnPlayerEntry);
         hub.Subscribe<GameTurnCardPubSubMessage>(OnGameTurnCard);
         hub.Subscribe<GameDisplayWinnerPubSubMessage>(OnGameDisplayWinner);
+        hub.Subscribe<GameTurnRefreshUIMessage>(OnRefreshUI);
     }
     public async void StartGame()
     {
@@ -151,6 +152,10 @@
         string RoundGame = string.Empty;
         if (winner.Round) RoundGame = "Round"; else RoundGame = "Game";
         await JsRuntime.InvokeVoidAsync("alert", $"{winner.Player.Name} won {RoundGame}"); // Alert
+        StateHasChanged();
+    }
+    public void OnRefreshUI(GameTurnRefreshUIMessage msg)
+    {
         StateHasChanged();
     }
 }

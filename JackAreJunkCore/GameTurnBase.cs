@@ -137,4 +137,9 @@ namespace JackAreJunk
     {
         public ICard Card { get; set; }
     }
+
+    public class GameTurnRefreshUIMessage
+    {
+
+    }
 }
