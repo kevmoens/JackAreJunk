@@ -108,6 +108,7 @@ namespace JackAreJunk
                     IsGameOver = true;
                 }
                 gameDisplay.DispayWinner();
+                NextPlayerTurn();
                 return true;
             }
             LastDiscardedCard = result.ReturnCard;
