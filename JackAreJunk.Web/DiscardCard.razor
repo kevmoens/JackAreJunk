@@ -1,0 +1,97 @@
+﻿<style>
+    .card {
+        max-width: 100%;
+        max-height: 100%;
+    }
+</style>
+<button style="width: 100%; height: 100%;" disabled="@IsDisabled" @onclick="OnCardClicked">
+    @if (Card != null)
+    {
+        <img class="card" src="@GetCardImagePath()" />
+    }
+</button>
+@code {
+    [Parameter]
+    public JackAreJunk.ICard Card { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.ICard> CardChanged { get; set; }
+
+    [Parameter]
+    public JackAreJunk.Game Game { get; set; }
+
+    [Parameter]
+    public EventCallback<JackAreJunk.Game> GameChanged { get; set; }
+
+    private bool _IsDisabled;
+    [Parameter]
+    public bool IsDisabled {  get { return _IsDisabled; } set { _IsDisabled = value; StateHasChanged(); } }
+
+    [Parameter]
+    public EventCallback<bool> IsDisabledChanged { get; set; }
+
+    [Parameter]
+    public EventCallback CardClicked { get; set; }
+
+    public DiscardCard()
+    {
+    }
+    public async void OnCardClicked()
+    {
+        if (Game == null || Game.CurrentTurn == null) return;
+        await CardClicked.InvokeAsync();
+        Game.CurrentTurn.WaitForCard.SetResult(Game.LastDiscardedCard);
+        StateHasChanged();
+    }
+
+    public bool IsCardEnabled()
+    {
+        if (Game.IsGameOver)
+        {
+            return false;
+        }
+        if (Game.CurrentTurn == null)
+        {
+            return false;
+        }
+        if (Game.Deck.Cards.Count <= 0)
+        {
+            return false;
+        }
+        return true;
+    }
+    public string GetCardImagePath()
+    {
+        string path = "/images/";
+        if (Card.IsJoker)
+        {
+            if (Card.IsRed)
+            {
+                return $"{path}red_joker.png";
+            }
+            return $"{path}black_joker.png";
+        }
+        switch (Card.Rank)
+        {
+            case (Rank.C01):
+                path += "ace";
+                break;
+            case (Rank.Jack):
+                path += "jack";
+                break;
+            case (Rank.Queen):
+                path += "queen";
+                break;
+            case (Rank.King):
+                path += "king";
+                break;
+            default:
+                path += Card.Rank.ToString().TrimStart('C', '0');
+                break;
+        }
+        path += "_of_";
+        path += Card.Suit.ToString().ToLower();
+        path += ".png";
+        return path;
+    }
+}

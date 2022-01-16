@@ -58,7 +58,7 @@
             <button class="GameButton" @onclick="OnPile" disabled=@PileDiscardDisabled>Pile</button>
         </div>
         <div class="Discard">
-            <button class="GameButton" @onclick="OnDiscard" disabled="@PileDiscardDisabled"> @game.LastDiscardedCard </button>
+            <DiscardCard Game="@game" Card="@game.LastDiscardedCard" IsDisabled="@PileDiscardDisabled" CardClicked="@OnDiscard" />
         </div>
         <div class="Discard">
             @if (CurrentCard != null)
@@ -122,9 +122,7 @@
     }
     public void OnDiscard()
     {
-        if (game.CurrentTurn == null) return;
         PileDiscardDisabled = true;
-        game.CurrentTurn.WaitForCard.SetResult(game.LastDiscardedCard);
         StateHasChanged();
     }
     public void OnPlayerEntry(PlayerEntryPubSubMessage message)
