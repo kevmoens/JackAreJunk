@@ -3,7 +3,7 @@
     public enum Suit
     {
         Diamonds
-        ,Heart
+        ,Hearts
         ,Spades
         ,Clubs
     }
@@ -39,7 +39,7 @@
         {
             Suit = suit;
             Rank = rank;
-            IsRed = Suit == Suit.Diamonds || Suit == Suit.Heart;
+            IsRed = Suit == Suit.Diamonds || Suit == Suit.Hearts;
         }
         public override string ToString()
         {
