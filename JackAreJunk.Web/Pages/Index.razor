@@ -55,7 +55,9 @@
     </div>
     <div class="DiscardPile">
         <div class="Pile">
-            <button class="GameButton" @onclick="OnPile" disabled=@PileDiscardDisabled>Pile</button>
+            <button class="GameButton" @onclick="OnPile" disabled=@PileDiscardDisabled>
+                <img class="card" src="images/card_back.png" />
+            </button>
         </div>
         <div class="Discard">
             <DiscardCard Game="@game" Card="@game.LastDiscardedCard" IsDisabled="@PileDiscardDisabled" CardClicked="@OnDiscard" />
