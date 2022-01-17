@@ -13,6 +13,7 @@
 
     .PlayerCards {
         display: inline;
+        overflow: auto;
         flex: 9;
         width: 100%;
         height: 100%;
@@ -40,7 +41,7 @@
         @foreach (JackAreJunk.Player player in game.Players)
         {
             JackAreJunk.Player p = player;
-            <h1>
+            <h1 id="@player.Name">
                 @player.Name
                 @if (player == game.Players[game.CurrentPlayerTurn])
                 {
@@ -72,11 +73,11 @@
 </div>
 @if (game == null || game.Players == null || game.Players.Count == 0 || game.IsGameOver)
 {
-    <input type="button" class="GameButton" @onclick="StartGame" value="Start Game" />
+    <input type="button" class="btn btn-primary GameButton" @onclick="StartGame" value="Start Game" />
 }
 @if (game != null && game.Players != null && game.Players.Count > 0 && !game.IsGameOver)
 {
-    <input type="button" class="GameButton" @onclick="StartRound" value="Play Round" />
+    <input type="button" class="btn btn-primary GameButton" @onclick="StartRound" value="Play Round" />
 }
 
 @code {
@@ -131,21 +132,22 @@
     {
         NavigationManager.NavigateTo("PlayerEntry");
     }
-    public Task OnGameTurnCard(GameTurnCardPubSubMessage turnCard)
+    public async Task OnGameTurnCard(GameTurnCardPubSubMessage turnCard)
     {
+        await JsRuntime.InvokeVoidAsync("scrollIntoView",  game.Players[game.CurrentPlayerTurn].Name);
         if (turnCard == null)
         {
             PileDiscardDisabled = true;
             CurrentCard = null;
             StateHasChanged();
-            return Task.CompletedTask;
+            return;
         }
 
         CurrentCard = turnCard.Card;
         PileDiscardDisabled = CurrentCard != null;
 
         StateHasChanged();
-        return Task.CompletedTask;
+        return;
     }
     public async void OnGameDisplayWinner(GameDisplayWinnerPubSubMessage winner)
     {

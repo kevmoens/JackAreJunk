@@ -25,6 +25,7 @@ namespace JackAreJunk
         {
             var playerEntry = serviceProvider.GetService<IPlayerEntry>();
             var names = await playerEntry.GetPlayerNames();
+            Players.Clear();
             foreach (var name in names)
             {
                 Players.Add(new Player() { Name = name, CardsPerDeal = 10 });
